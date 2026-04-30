@@ -1,0 +1,24 @@
+[Unit]
+Description=Offline AI Assistant (FastAPI + Ollama)
+After=network.target ollama.service
+Wants=ollama.service
+
+[Service]
+# Replace YOUR_USER with the Linux user that owns the project directory,
+# and PROJECT_DIR with the absolute path (e.g. /home/alice/offline-ai-assistant).
+User=YOUR_USER
+WorkingDirectory=PROJECT_DIR
+EnvironmentFile=-PROJECT_DIR/.env
+ExecStart=PROJECT_DIR/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000
+Restart=on-failure
+RestartSec=3
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=PROJECT_DIR/data PROJECT_DIR/logs
+
+[Install]
+WantedBy=multi-user.target
