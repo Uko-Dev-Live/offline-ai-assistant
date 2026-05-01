@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Offline AI Assistant</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Fraunces:opsz,wght@9..144,400;9..144,600&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <aside class="sidebar">
+    <header class="brand">
+      <span class="dot" id="status-dot" title="Ollama status"></span>
+      <h1>local·llm</h1>
+    </header>
+
+    <nav class="modes" role="tablist">
+      <button class="mode active" data-mode="chat"      role="tab">chat</button>
+      <button class="mode"        data-mode="structured" role="tab">structured</button>
+      <button class="mode"        data-mode="benchmark"  role="tab">benchmark</button>
+    </nav>
+
+    <button id="new-chat" class="btn-primary">＋ new chat</button>
+
+    <nav id="conversations" class="conversations" aria-label="Conversations"></nav>
+
+    <footer class="meta">
+      <div class="meta-row"><span>model</span><code id="meta-model">—</code></div>
+      <div class="meta-row"><span>host</span><code id="meta-host">localhost</code></div>
+    </footer>
+  </aside>
+
+  <main class="main">
+    <!-- ============== CHAT VIEW ============== -->
+    <section id="view-chat" class="view active">
+      <div id="messages" class="messages">
+        <div class="empty">
+          <h2>Ready when you are.</h2>
+          <p>This assistant runs entirely on your machine. No data leaves this computer.</p>
+        </div>
+      </div>
+      <form id="composer" class="composer">
+        <textarea
+          id="input"
+          placeholder="Ask anything…  (Enter to send, Shift+Enter for newline)"
+          rows="1"
+          autofocus
+        ></textarea>
+        <button id="send" type="submit" aria-label="Send">↵</button>
+      </form>
+    </section>
+
+    <!-- ============== STRUCTURED VIEW ============== -->
+    <section id="view-structured" class="view">
+      <div class="view-head">
+        <h2>Structured output</h2>
+        <p>
+          The model is forced to return JSON matching a Pydantic schema
+          (<code>answer</code>, <code>confidence</code>, <code>reasoning</code>,
+          <code>follow_up_questions</code>, <code>tags</code>). On invalid output the
+          server retries once before giving up gracefully.
+        </p>
+      </div>
+
+      <form id="structured-form" class="structured-form">
+        <textarea
+          id="structured-prompt"
+          rows="3"
+          placeholder="Ask a question. e.g. What's the difference between TCP and UDP?"
+        ></textarea>
+        <button type="submit" class="btn-primary solid" id="structured-go">run →</button>
+      </form>
+
+      <div id="structured-output" class="structured-output"></div>
+    </section>
+
+    <!-- ============== BENCHMARK VIEW ============== -->
+    <section id="view-benchmark" class="view">
+      <div class="view-head">
+        <h2>Benchmark</h2>
+        <p>
+          Quick measurement of <strong>time to first token (TTFT)</strong>,
+          <strong>tokens / second</strong> and <strong>total latency</strong>.
+          For repeatable results use the CLI:
+          <code>python -m scripts.benchmark</code>.
+        </p>
+      </div>
+
+      <form id="bench-form" class="bench-form">
+        <label class="field">
+          <span>prompt</span>
+          <textarea id="bench-prompt" rows="2">Explain what an operating system kernel does in three short sentences.</textarea>
+        </label>
+        <div class="bench-row">
+          <label class="field small">
+            <span>runs</span>
+            <input type="number" id="bench-runs" value="3" min="1" max="20" />
+          </label>
+          <label class="field small">
+            <span>warmup</span>
+            <input type="checkbox" id="bench-warmup" checked />
+          </label>
+          <button type="submit" class="btn-primary solid" id="bench-go">run →</button>
+        </div>
+      </form>
+
+      <div id="bench-output" class="bench-output"></div>
+    </section>
+  </main>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>
